@@ -6,11 +6,16 @@
 CLAUDE.md 体检器 —— 检查任意项目的 `CLAUDE.md` 是否符合"把它当**运行时配置**、
 不是项目说明书"的最佳实践，给出评分卡 + 修复建议。
 
+<p align="center">
+  <img src="examples/demo.gif" width="720" alt="hekouwang-claude-md-doctor 体检演示">
+  <br><sub>↑ 一句「检查我的 CLAUDE.md」/ <code>python3 check.py</code>，秒出评分 + 修复建议（免费 CLI）</sub>
+</p>
+
 一句话判据：**CLAUDE.md 每次会话都被重新加载、要付上下文费。值不值得每次会话都为这段内容付一次费？**
 
 <p align="center">
   <img src="examples/sample-report.png" width="420" alt="CLAUDE.md 体检报告卡（示例）">
-  <br><sub>↑ 品牌可视化报告卡（<b>付费增值</b>示例）。免费版输出文本/JSON 报告，见下。</sub>
+  <br><sub>↑ 品牌可视化报告卡（<b>付费增值</b>示例）。免费版输出文本/JSON 报告。</sub>
 </p>
 
 ## 为什么需要它
