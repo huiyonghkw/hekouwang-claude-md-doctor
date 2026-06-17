@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-claude-md-doctor · CLAUDE.md 体检器（确定性机检层）
+hekouwang-claude-md-doctor · CLAUDE.md 体检器（确定性机检层）
+会勇禾口王的AI笔记 · @huiyonghkw —— 不聊 AI 会不会取代你，只聊先用 AI 的人怎么取代你。
 
 零依赖（仅用 Python3 标准库）。对一个项目目录里的 CLAUDE.md 做启发式检查，
-按"运行时配置而非项目说明书"的 8 条最佳实践打分，输出可读报告 + 修复线索。
+按"运行时配置而非项目说明书"的 9 条最佳实践打分，输出可读报告 + 修复线索。
 
 用法:
     python3 check.py [项目目录]            # 默认当前目录
@@ -371,6 +372,7 @@ def print_report(data):
     root = data["root"]
     print()
     print(bold("  CLAUDE.md DOCTOR  ") + dim(" · CLAUDE.md 体检报告"))
+    print(dim("  会勇禾口王的AI笔记 · @huiyonghkw"))
     print(dim("  目标: " + root))
     if data["md_name"]:
         info = data["info"]
@@ -400,6 +402,9 @@ def print_report(data):
     print(dim("  " + "─" * 58))
     print(f"  {bold('得分')}  {gcolor(bar)}  {gcolor(bold(str(s) + ' / 100'))}   {gcolor(grade)}")
     print(dim("  注: 机检为启发式；'图书馆 vs 路由器''规则是否可执行'需读正文复核。"))
+    print(dim("  " + "─" * 58))
+    print(dim("  —— 会勇禾口王的AI笔记 · @huiyonghkw"))
+    print(dim("     不聊 AI 会不会取代你，只聊先用 AI 的人怎么取代你。"))
     print()
 
 
