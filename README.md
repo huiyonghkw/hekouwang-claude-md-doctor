@@ -1,5 +1,12 @@
 # hekouwang-claude-md-doctor
 
+**简体中文** · [English](README.en.md)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+![Python](https://img.shields.io/badge/python-3.x-blue.svg)
+![dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen.svg)
+![open source](https://img.shields.io/badge/open%20source-free-success.svg)
+
 > **会勇禾口王的AI笔记** 出品 · `@huiyonghkw`
 > _不聊 AI 会不会取代你，只聊先用 AI 的人怎么取代你。_
 
@@ -69,6 +76,17 @@ python3 check.py [项目目录] --json   # 机器可读 JSON（CI 可用）
 ## 评分档位
 
 A 优秀 ≥85 · B 良好 ≥70 · C 及格 ≥50 · D 建议重写 <50
+
+## 许可协议 / License
+
+本仓库代码以 **MIT License** 开源 —— 免费使用、修改、分发、商用，仅需保留版权与许可声明。详见 [LICENSE](LICENSE)。
+
+> 范围说明：MIT 覆盖本仓库代码（`check.py` / `SKILL.md` 等）。品牌名「会勇禾口王的AI笔记」与**付费可视化报告卡**（依赖未公开的品牌字体与版式）属增值服务，不在开源范围内——但这不影响你免费、自由地使用命令行体检器。
+
+## 贡献 / Contributing
+
+欢迎提 Issue / PR：新增检查项、降低误报、补充其它语言/框架的启发式规则。
+保持零运行时依赖（仅 Python 3 标准库）是硬约束。
 
 ---
 
