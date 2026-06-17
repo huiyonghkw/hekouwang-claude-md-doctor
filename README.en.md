@@ -1,8 +1,8 @@
-# hekouwang-claude-md-doctor
+# hekouwang-claude-md-doctor-skill
 
 [简体中文](README.md) · **English**
 
-[![CI](https://github.com/huiyonghkw/hekouwang-claude-md-doctor/actions/workflows/ci.yml/badge.svg)](https://github.com/huiyonghkw/hekouwang-claude-md-doctor/actions/workflows/ci.yml)
+[![CI](https://github.com/huiyonghkw/hekouwang-claude-md-doctor-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/huiyonghkw/hekouwang-claude-md-doctor-skill/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/python-3.x-blue.svg)
 ![dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen.svg)
@@ -15,7 +15,7 @@ best practice of *"treat it as runtime config, not a project manual"*, and retur
 a scorecard plus prioritized fixes.
 
 <p align="center">
-  <img src="examples/demo.gif" width="720" alt="hekouwang-claude-md-doctor demo">
+  <img src="examples/demo.gif" width="720" alt="hekouwang-claude-md-doctor-skill demo">
   <br><sub>↑ Say "check my CLAUDE.md" or run <code>python3 check.py</code> — instant score + fixes (free CLI)</sub>
 </p>
 
@@ -63,7 +63,7 @@ Exit code: `1` if any FAIL, else `0` (usable as a CI gate).
 ### Docker (no Python needed)
 ```bash
 # Pull the prebuilt image (auto-published to GHCR on each tag via GitHub Actions)
-docker run --rm -v "$PWD:/work" ghcr.io/huiyonghkw/hekouwang-claude-md-doctor
+docker run --rm -v "$PWD:/work" ghcr.io/huiyonghkw/hekouwang-claude-md-doctor-skill
 
 # Or build locally
 docker build -t claude-md-doctor .
@@ -77,7 +77,7 @@ docker run --rm -v "$PWD:/work" claude-md-doctor /work --json
   with: { python-version: "3.x" }
 - name: CLAUDE.md health check (fail the PR if non-compliant)
   run: |
-    curl -sO https://raw.githubusercontent.com/huiyonghkw/hekouwang-claude-md-doctor/main/check.py
+    curl -sO https://raw.githubusercontent.com/huiyonghkw/hekouwang-claude-md-doctor-skill/main/check.py
     python3 check.py .
 ```
 This repo's own CI lives in [`.github/workflows/ci.yml`](.github/workflows/ci.yml) (syntax + good/bad fixtures + JSON validity).

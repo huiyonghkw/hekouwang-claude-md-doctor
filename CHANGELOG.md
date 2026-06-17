@@ -19,4 +19,4 @@
 ### 商业模型
 - 命令行体检器开源免费（MIT）；品牌可视化报告卡为付费增值，依赖未公开字体/版式，不在仓库内。
 
-[1.0.0]: https://github.com/huiyonghkw/hekouwang-claude-md-doctor/releases/tag/v1.0.0
+[1.0.0]: https://github.com/huiyonghkw/hekouwang-claude-md-doctor-skill/releases/tag/v1.0.0

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-hekouwang-claude-md-doctor · CLAUDE.md 体检器（确定性机检层）
+hekouwang-claude-md-doctor-skill · CLAUDE.md 体检器（确定性机检层）
 会勇禾口王的AI笔记 · @huiyonghkw —— 不聊 AI 会不会取代你，只聊先用 AI 的人怎么取代你。
 
 零依赖（仅用 Python3 标准库）。对一个项目目录里的 CLAUDE.md 做启发式检查，

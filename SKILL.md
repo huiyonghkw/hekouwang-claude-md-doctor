@@ -1,15 +1,15 @@
 ---
-name: hekouwang-claude-md-doctor
+name: hekouwang-claude-md-doctor-skill
 description: >
   会勇禾口王的AI笔记 · CLAUDE.md 体检器。检查一个项目的 CLAUDE.md（及子目录本地
   CLAUDE.md）是否符合"把它当运行时配置、不是项目说明书"的最佳实践，给出评分卡 +
   按优先级的修复建议，并可代为修复。触发：用户说「检查我的 CLAUDE.md / CLAUDE.md
-  体检 / 我的 CLAUDE.md 规范吗 / claude-md-doctor / hekouwang-claude-md-doctor /
+  体检 / 我的 CLAUDE.md 规范吗 / claude-md-doctor / hekouwang-claude-md-doctor-skill /
   audit CLAUDE.md / lint CLAUDE.md / 看看我的 claude 配置合不合规」。
   任何"评估/审查/优化某个项目 CLAUDE.md 质量"的请求都应触发。
 ---
 
-# hekouwang-claude-md-doctor · CLAUDE.md 体检器
+# hekouwang-claude-md-doctor-skill · CLAUDE.md 体检器
 
 > **会勇禾口王的AI笔记** 出品 · `@huiyonghkw`
 > _不聊 AI 会不会取代你，只聊先用 AI 的人怎么取代你。_

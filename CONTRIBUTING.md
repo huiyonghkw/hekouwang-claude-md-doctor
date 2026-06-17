@@ -1,6 +1,6 @@
 # 贡献指南 / Contributing
 
-感谢参与 **hekouwang-claude-md-doctor**！欢迎新增检查项、降低误报、为其它语言/框架补启发式规则。
+感谢参与 **hekouwang-claude-md-doctor-skill**！欢迎新增检查项、降低误报、为其它语言/框架补启发式规则。
 
 ## 硬约束（不可破）
 
@@ -11,8 +11,8 @@
 ## 本地开发
 
 ```bash
-git clone https://github.com/huiyonghkw/hekouwang-claude-md-doctor
-cd hekouwang-claude-md-doctor
+git clone https://github.com/huiyonghkw/hekouwang-claude-md-doctor-skill
+cd hekouwang-claude-md-doctor-skill
 
 python3 check.py tests/fixtures/good     # 期望 exit 0
 python3 check.py tests/fixtures/bad      # 期望 exit 1（有 FAIL 卡关）

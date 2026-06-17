@@ -1,8 +1,8 @@
-# hekouwang-claude-md-doctor
+# hekouwang-claude-md-doctor-skill
 
 **简体中文** · [English](README.en.md)
 
-[![CI](https://github.com/huiyonghkw/hekouwang-claude-md-doctor/actions/workflows/ci.yml/badge.svg)](https://github.com/huiyonghkw/hekouwang-claude-md-doctor/actions/workflows/ci.yml)
+[![CI](https://github.com/huiyonghkw/hekouwang-claude-md-doctor-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/huiyonghkw/hekouwang-claude-md-doctor-skill/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/python-3.x-blue.svg)
 ![dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen.svg)
@@ -15,7 +15,7 @@ CLAUDE.md 体检器 —— 检查任意项目的 `CLAUDE.md` 是否符合"把它
 不是项目说明书"的最佳实践，给出评分卡 + 修复建议。
 
 <p align="center">
-  <img src="examples/demo.gif" width="720" alt="hekouwang-claude-md-doctor 体检演示">
+  <img src="examples/demo.gif" width="720" alt="hekouwang-claude-md-doctor-skill 体检演示">
   <br><sub>↑ 一句「检查我的 CLAUDE.md」/ <code>python3 check.py</code>，秒出评分 + 修复建议（免费 CLI）</sub>
 </p>
 
@@ -60,7 +60,7 @@ python3 check.py [项目目录] --json   # 机器可读 JSON（CI 可用）
 ### Docker（不想装 Python 也能跑）
 ```bash
 # 拉官方镜像直接用（打 tag 时 GitHub Actions 自动发布到 GHCR）
-docker run --rm -v "$PWD:/work" ghcr.io/huiyonghkw/hekouwang-claude-md-doctor
+docker run --rm -v "$PWD:/work" ghcr.io/huiyonghkw/hekouwang-claude-md-doctor-skill
 
 # 或本地自建
 docker build -t claude-md-doctor .
@@ -74,7 +74,7 @@ docker run --rm -v "$PWD:/work" claude-md-doctor /work --json
   with: { python-version: "3.x" }
 - name: CLAUDE.md 体检（不合格则拦 PR）
   run: |
-    curl -sO https://raw.githubusercontent.com/huiyonghkw/hekouwang-claude-md-doctor/main/check.py
+    curl -sO https://raw.githubusercontent.com/huiyonghkw/hekouwang-claude-md-doctor-skill/main/check.py
     python3 check.py .
 ```
 本仓库自身的 CI 见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)（语法 + good/bad 夹具 + JSON 合法性）。
