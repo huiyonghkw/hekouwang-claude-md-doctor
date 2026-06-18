@@ -12,6 +12,7 @@ description: >
 # hekouwang-claude-md-doctor-skill · CLAUDE.md 体检器
 
 > **会勇禾口王的AI笔记** 出品 · `@huiyonghkw`
+> GitHub: <https://github.com/huiyonghkw/hekouwang-claude-md-doctor-skill>
 > _不聊 AI 会不会取代你，只聊先用 AI 的人怎么取代你。_
 
 把"CLAUDE.md 最佳实践"做成一个能跑在任何项目上的检查器：机检定量 + 模型定性，
