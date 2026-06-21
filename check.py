@@ -43,10 +43,12 @@ WEIGHT = {"PASS": 1.0, "WARN": 0.5, "FAIL": 0.0}  # INFO 不计分
 # 让"越短越准"类核心项更重；"加内容"类项（Hook/记忆/人格）缺了只算小扣分。
 # 否则工具会一边喊"越短越好"，一边因为"没写工作风格块"扣人分，逼用户把文件写长。
 IMPORTANCE = {
+    # 安全红线：正文里有密钥 = 资损级，权重拉满
+    "secret": 1.5,
     # 减法核心：短、可执行、路由不堆料、别替模型补它已会的
     "exist": 1.5, "length": 1.5, "actionable": 1.5, "router": 1.5, "noteach": 1.5,
     # 标准项
-    "donot": 1.0, "local": 1.0, "thirtysec": 1.0,
+    "donot": 1.0, "local": 1.0, "thirtysec": 1.0, "pointers": 1.0,
     # 加内容项：有更好，但缺失不重罚（别逼用户做加法）
     "hooks": 0.6, "memory": 0.6, "persona": 0.6,
 }
@@ -103,6 +105,36 @@ TEACHING = [
 # 架构/流程图特征字符（箭头 + 方框角）。注意：├└│ 等"树连接符"不在此列——
 # 目录树是路由地图，应保留在正文，不该被当成"图书馆图"建议下沉。
 FLOW_CHARS = set("▼▲►◄→←↔╔╗╚╝═┌┐┘╭╮╯╰")
+
+# ---------- 密钥指纹（正文里出现 = 资损级，直接 FAIL）----------
+# 教程头号 Don't："Never store secrets in CLAUDE.md"。本脚本不读 .env，
+# 但被体检的 CLAUDE.md 正文本身绝不该硬编码密钥。只收高置信度指纹，低误伤。
+SECRET_PATTERNS = [
+    ("私钥块",        re.compile(r"-----BEGIN (?:RSA |EC |DSA |OPENSSH |PGP )?PRIVATE KEY-----")),
+    ("OpenAI/Anthropic key", re.compile(r"sk-(?:ant-)?[A-Za-z0-9_\-]{20,}")),
+    ("AWS Access Key", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
+    ("Google API key", re.compile(r"\bAIza[0-9A-Za-z_\-]{35}\b")),
+    ("GitHub token",   re.compile(r"\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{36}\b|\bgithub_pat_[A-Za-z0-9_]{60,}")),
+    ("Slack token",    re.compile(r"\bxox[baprs]-[A-Za-z0-9\-]{10,}")),
+    ("JWT",            re.compile(r"\beyJ[A-Za-z0-9_\-]{10,}\.eyJ[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{10,}")),
+    ("硬编码口令/密钥赋值", re.compile(
+        r"(?i)\b(?:password|passwd|pwd|secret|api[_\-]?key|access[_\-]?key|auth[_\-]?token|client[_\-]?secret)\b"
+        r"\s*[:=]\s*['\"]([^'\"\s]{6,})['\"]")),
+]
+# 赋值型占位符（宽）：仅用于 password=/secret= 这类，值常是示范，需宽豁免。
+PLACEHOLDER_RE = re.compile(
+    r"(?i)(x{3,}|y{3,}|your[_\-]?|<[^>]*>|\$\{|\benv\b|process\.env|os\.environ|"
+    r"example|changeme|placeholder|redacted|todo|n/a|\.\.\.|…|abc123|123456|test|dummy|sample)")
+# 指纹型填充（窄）：sk-/AKIA/私钥等已高度具体，只豁免明显的文档占位，别误杀含数字串的真 key。
+FILLER_RE = re.compile(r"(?i)(x{4,}|y{4,}|your|<|>|\.\.\.|…|example|placeholder|redacted|dummy|sample)")
+
+
+def _redact(s):
+    """脱敏：保留前 4 位 + 长度，其余打码，避免在报告里二次泄露。"""
+    s = s.strip()
+    if len(s) <= 8:
+        return s[:2] + "***"
+    return s[:4] + "***" + f"({len(s)} 字符)"
 
 
 def find_target_md(root):
@@ -169,13 +201,17 @@ def analyze_body(text):
         "max_code_block_isdiagram": False,
         "max_table_rows": 0,
         "docs_pointers": 0,
+        "pointers": [],   # [(path, line_no, kind)]  kind: 'docs' | 'import'
         "headings": [],
     }
     in_code = False
     cur_code_len = 0
     cur_code_diagram = False
     table_run = 0
-    for ln in lines:
+    # 原生 @import 语法：@ 后跟一个含 / 或带扩展名的路径（排除 @邮箱、@提及）
+    import_re = re.compile(r"(?:^|\s)@(~?[\w\-./]+\.[\w]+|~?[\w\-.]+/[\w\-./]+)")
+    for i, ln in enumerate(lines):
+        ln_no = i + 1
         st = ln.strip()
         if st.startswith("```"):
             if not in_code:
@@ -201,8 +237,13 @@ def analyze_body(text):
         # 标题
         if st.startswith("#"):
             info["headings"].append(st.lstrip("#").strip())
-        # docs/ 指针
-        info["docs_pointers"] += len(re.findall(r"docs/[\w\-./]+", ln))
+        # docs/ 文本指针
+        for m in re.finditer(r"docs/[\w\-./]+", ln):
+            info["pointers"].append((m.group(0).rstrip("."), ln_no, "docs"))
+            info["docs_pointers"] += 1
+        # 原生 @import 指针
+        for m in import_re.finditer(ln):
+            info["pointers"].append((m.group(1), ln_no, "import"))
     return info
 
 
@@ -226,6 +267,31 @@ def check(root):
         text = f.read()
     info = analyze_body(text)
     low = text.lower()
+
+    # #0 安全红线：正文里硬编码密钥 = 资损级，直接 FAIL
+    secret_hits = []
+    for label, pat in SECRET_PATTERNS:
+        for m in pat.finditer(text):
+            frag = m.group(0)
+            if m.groups() and m.lastindex:   # 赋值型：判捕获的值，宽豁免
+                val = m.group(1)
+                if PLACEHOLDER_RE.search(val):
+                    continue
+            else:                            # 指纹型：判整段，仅窄豁免
+                val = frag
+                if FILLER_RE.search(val):
+                    continue
+            ln_no = text[:m.start()].count("\n") + 1
+            secret_hits.append((label, ln_no, _redact(val)))
+    if not secret_hits:
+        add("secret", "无硬编码密钥（安全红线）", "PASS",
+            "正文未检出 key / token / 私钥 / 口令赋值。")
+    else:
+        sample = "; ".join(f"L{n} {lab}：{red}" for lab, n, red in secret_hits[:6])
+        add("secret", "无硬编码密钥（安全红线）", "FAIL",
+            f"正文检出 {len(secret_hits)} 处疑似密钥：{sample}",
+            "立刻移出 CLAUDE.md（它每次会话都进上下文、还可能被提交进 git）。"
+            "改放 .env / 密钥管理器，正文最多写'见环境变量 XXX'。命中后请视为已泄露并轮换。")
 
     # #1 篇幅（越短越好，200 行经验上限）
     L, C = info["lines"], info["chars"]
@@ -284,9 +350,33 @@ def check(root):
             "检出可能属于'图书馆'的大块：" + "；".join(smells) + "。",
             "迁移到 docs/architecture.md 等，正文只留一行指针（Tier 2 按需打开）。")
     else:
-        note = f"（含 {info['docs_pointers']} 处 docs/ 指针，路由风格 👍）" if info["docs_pointers"] else ""
+        npts = len(info["pointers"])
+        note = f"（含 {npts} 处下沉指针 docs/ 或 @import，路由风格 👍）" if npts else ""
         add("router", "路由器不是图书馆（无大块可下沉内容）", "PASS",
             "未检出明显的大块图书馆内容。" + note)
+
+    # #4b 指针/import 不能是死链（指向不存在的文件比没指针更糟）
+    dead = []
+    for path, ln_no, kind in info["pointers"]:
+        if path.startswith("~"):
+            target = os.path.expanduser(path)
+        elif os.path.isabs(path):
+            target = path
+        else:
+            target = os.path.join(root, path)
+        if not os.path.exists(target):
+            dead.append((path, ln_no, kind))
+    if not info["pointers"]:
+        add("pointers", "下沉指针均可解析（无死链）", "INFO",
+            "正文没有 docs/ 或 @import 指针。")
+    elif not dead:
+        add("pointers", "下沉指针均可解析（无死链）", "PASS",
+            f"{len(info['pointers'])} 处指针全部指向存在的文件。")
+    else:
+        show = "; ".join(f"L{n}:{p}" for p, n, k in dead[:6]) + (" …" if len(dead) > 6 else "")
+        add("pointers", "下沉指针均可解析（无死链）", "WARN",
+            f"{len(dead)} 处指针指向不存在的文件：{show}",
+            "补上缺失的 docs 文件，或修正/删除死链——模型按图索骥扑空比没指针更费事。")
 
     # #5 敏感模块本地 CLAUDE.md（HIGH 驱动 WARN，SOFT 仅提示）
     sensitive = scan_sensitive(root)

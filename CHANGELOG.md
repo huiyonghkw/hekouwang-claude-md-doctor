@@ -2,6 +2,28 @@
 
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.2.0] - 2026-06-21
+
+对照社区教程 `luongnv89/claude-howto` 的 Memory 最佳实践逐条比对后，补上三个真空白
+（只取它的"安全 + 机制正确性"，不取它"把文件写全"的加法倾向）。
+
+### 新增
+- **安全红线检查「无硬编码密钥」(#0)**：扫正文里的 `sk-`/`AKIA`/`AIza`/`gh*_`/`xox*`/
+  JWT / 私钥块 / `password=`/`secret=` 等指纹，命中即 **FAIL**（权重 1.5、资损级）。
+  报告对命中值脱敏（前 4 位 + 长度）。占位/示例值（`<your-pwd>`/`${VAR}`/`example` 等）自动豁免。
+  补齐教程头号 Don't "Never store secrets in CLAUDE.md"——此前脚本只防自己读 .env，
+  却不查被体检文件本身是否藏密钥。
+- **指针死链检查 (#4b)**：`docs/` 文本指针与原生 `@import` 路径都校验目标文件是否存在，
+  死链 → WARN（指向不存在的文件比没指针更糟）。
+
+### 变更
+- **#4 路由器检查认原生 `@import` 语法**：此前只认纯文本 `docs/...`，用官方 `@path` 导入
+  反而不给"下沉指针"加分；现在两种写法都算合格指针。
+
+### 文档 / 测试
+- `SKILL.md` 评分表补 #0 与 #4b，加权说明与修复动作清单同步（拔密钥 + 轮换提醒、修死链）。
+- good 夹具补 `docs/architecture.md`、`docs/api.md` 桩文件，示范"指针均可解析"。
+
 ## [1.1.0] - 2026-06-18
 
 把 Claude Code 之父 Boris Cherny / Cat Wu 的"context minimalism · 别跟模型较劲做加法"
